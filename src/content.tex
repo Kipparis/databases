@@ -1,0 +1,191 @@
+\section{Definitions}
+
+{\it Server}\index{Server} -- resource manager.
+
+{\it Client}\index{Client} -- device that wants to use resource.
+
+{\it Thin client}\index{Thin client} -- software that is primiarily designed to
+communicate with a server. Its features are produced by servers such as cloud
+platform
+
+{\it Thick client}\index{Thick client} -- software that implements its own
+features. It may connect to servers but it remains mostly functional when
+disconnected.
+
+\subsection{Transactions and concurrency control}
+
+{\it Serializable schedule}\index{Serializable schedule}. A transaction schedule
+is serializable if its outcome is equal to the outcome of its transactions
+executed serially i.e. sequentially without overlapping in time. A serializable
+schedule always leaves the database in consistent state. A serial schedule is
+always a serializable schedule because a new transaction only starts when the
+older one has finished execution. 
+
+\subsection{Data Design}
+
+{\it Semantic data model}\index{Semantic data model (SDM)} is a high-level
+semantics-based database description and structuring formalism (database
+model) for databases. An SDM specification describes a database in terms of
+the kinds of entities that exist in the application environment, the
+classification and groupings of those entities, and the ctructural
+interconnections among them \cite{semantic-data-model}.
+
+\subsection{Relational Model}
+
+% TODO: this information is incomplete and probably incorrect.
+
+{\it Domain}\index{Domain}
+\begin{eqnarray*}
+    D_{1}, D_{2},\ldots,D_{n}
+\end{eqnarray*}
+
+{\it Attributes}\index{Attributes}
+\begin{eqnarray*}
+    A_{1}, A_{2},\ldots,A_{n}
+\end{eqnarray*}
+
+{\it Record}\index{Record}
+\begin{eqnarray*}
+    &&r=<a_{1},a_{2},\ldots,a_{n}>, a_{i}\in D_{i}, r\in R\\
+    &&R\subset D_{1}\times D_{2}\times\ldots\times D_{n}
+\end{eqnarray*}
+
+
+\section{Database features}
+
+\begin{enumerate}
+    \item {\it Stored procedures}\index{Stored procedures} -- common part of
+        programs that are stored database
+    \item Tracking {\it data consistency}\index{Data consistency} -- no item
+        will break the rule.  {\it For example: if you store number of apples,
+        that number won't be less than zero.}
+    \item {\it Triggers}\index{Triggers} -- programmed handle of events in
+        database
+\end{enumerate}
+
+\section{Database Schema}
+
+Relationship cardinality \cite{database-relationships}:
+
+\begin{itemize}
+    \item One-to-one -- both tables can have only one record on each side of the
+        relationship. Each primary key value relates to none or only one record
+        in the related table.
+        \subitem Most one-to-one relationships are forced
+        by business rules and do not flow naturally from the data. Without such
+        a rule, you can typically combine both tables without breaking any
+        normalization rules.
+    \item One-to-many -- the primary key table contains only one record that
+        relates to none, one, or many records in the related table.
+    \item Many-to-many -- each record in both tables can relate to none or any
+        number of records in the other table. These relationships require a
+        third table, called an associate or linking table, because relational
+        systems cannot directly accommodate the relationship.
+\end{itemize}
+
+Relationship modality \cite{medium-modality-cardinality}:
+
+\begin{itemize}
+    \item Mandatory-optional: Every occurrence of entity A must be related to at
+        least one occurrence of entity B, but an occurrence of entity B need not be
+        related to any occurrences of entity A.For example, an Account need not be
+        related to any Orders (it might have been just set up), but an Order must be
+        related to an Account.
+    \item Mandatory-mandatory: Every occurrence of entity A
+        must be related to at least one occurrence of entity B, and every occurrence
+        of entity B must be related to at least one occurrence of entity A. For
+        example, an Order must be related to at least one Line Item and a Line
+        Item must be related to an Order.
+    \item Optional-optional: An
+        occurrence of entity A need not be related to any occurrences of
+        entity B, and an occurrence of entity B need not be related to any
+        occurrences of entity A. For example,in Banks Finance Cars, a Bank
+        might, but need not, finance any Cars and a Car might not have been
+        Financed by a Bank.
+    \item Optional-mandatory: Because relationships
+        are Bi-directional, an optional-mandatory relationship is an
+        inverse of a mandatory-optional relationship.
+\end{itemize}
+
+\section{Normalization}
+
+\subsection{Definition}
+{\it Normalization}\index{Normalization} is the process of structuring a
+databases, in accordance with a series of so-called normal forms in order to
+reduce data redundancy and improve data integrity \cite{database-normalization}.
+
+\subsection{Reason to use}
+{\it Normalization objectives}\index{Normalization objectives}:
+\begin{enumerate}
+    \item To free the collection of relations from undesirable insertion, update
+        and deletion dependencies;
+    \item To reduce the need for restructuring the collection of relations, as
+        new types of data are introduced, and thus increase the life span of
+        application programs;
+    \item To make the relational model more informative to users;
+    \item Minimize redesign when extending the database structure.
+\end{enumerate}
+
+{\bf Side-effects} that may arise in relations, that have not been sufficiently
+normalized:
+\begin{itemize}
+    \item {\bf Update anomaly.} The same information can be expressed on multiple
+        rows; therefore updates to the relation may result in logical
+        inconsistencies.
+    \item {\bf Insertion anomaly.} For example if teacher and students are in
+        one table, we cannot insert teacher that doesn't contain any students,
+        except we set students field to Null.
+    \item {\bf Deletion anomaly.} Same situation as for insertion, but deleting
+        information causes to loose another type of information.
+\end{itemize}
+
+\subsection{Normal forms}
+\begin{itemize}
+    \item {\bf First normal form (1NF).} Atomic columns (cells cannot have
+        tables as values)
+    \item {\bf Second normal form (2NF).} Every non-trivial functional
+        dependency either does not begin with a proper subset of a candidate key
+        or ends with a prime attribute (no partial functional dependencies of
+        non-prime attributes on candidate keys)
+        \ref{table:functional-dependency-example}
+    \item {\bf Third normal form (3NF).} Every non-trivial functional dependency
+        either begins with a superkey or ends with a prime attribute (no
+        transitive functional dependencies of non-prive attributes on candidate
+        keys)
+\end{itemize}
+
+{\it Example of functional dependency:}\cite{functional-dependency}
+\begin{center}
+    \begin{tabular}{|l|l|l|l|} \hline
+    {\bf Student ID} & {\bf Semester} & {\bf Lecture} & {\bf TA} \\\hline
+    1234 & 6 & Numerical methods & John \\\hline
+    1221 & 4 & Numerical Methods & Smith \\\hline
+    1234 & 6 & Visual Computing & Bob \\\hline
+    1201 & 2 & Numerical Methods & Peter \\\hline
+    1201 & 2 & Physics II & Simon \\\hline
+    \end{tabular}
+    \label{table:functional-dependency-example}
+\end{center}
+{\it We notice that whenever two rows in this table feature the
+same StudentID, they also necessarily have the same Semester values.}
+    
+
+
+\subsection{Decomposition steps}
+
+\section{Building a schedule}
+Precedence Graph For Testing Conflict Serializability in DBMS.
+
+\section{Database manager structure}
+% TODO: insert schema
+%
+%
+% TODO: possible sections:
+%   1. Database creation process
+
+\section{Best practives}
+
+\begin{enumerate}
+    \item 16-th Law of Systematics: \enquote{A complex system, designed in a hurry, never works, and it is impossible to fix it to make it work}
+\end{enumerate}
+
